@@ -15,11 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
   if (!pb.authStore.isValid) return json({ error: 'Admin role required' }, { status: 403 });
   try {
     const auth = await pb.collection('users').authRefresh({ expand: 'user_type' });
-    let userRecord = auth.record;
-    try {
-      userRecord = await pb.collection('users').getOne(auth.record.id, { expand: 'user_type' });
-    } catch {}
-    if (!isAdmin(userRecord)) return json({ error: 'Admin role required' }, { status: 403 });
+    if (!isAdmin(auth.record)) return json({ error: 'Admin role required' }, { status: 403 });
 
     return json(await pb.collection('passion_group').create(await request.json()));
   } catch {
@@ -32,11 +28,7 @@ export const DELETE: RequestHandler = async ({ request }) => {
   if (!pb.authStore.isValid) return json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const auth = await pb.collection('users').authRefresh({ expand: 'user_type' });
-    let userRecord = auth.record;
-    try {
-      userRecord = await pb.collection('users').getOne(auth.record.id, { expand: 'user_type' });
-    } catch {}
-    if (!isAdmin(userRecord)) return json({ error: 'Admin role required' }, { status: 403 });
+    if (!isAdmin(auth.record)) return json({ error: 'Admin role required' }, { status: 403 });
 
     const { id } = await request.json();
     await pb.collection('passion_group').delete(id);

@@ -22,25 +22,10 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 
   const pb = createPocketBase();
   try {
-    // 5th param is createData, 6th param is options for query (expand)
-    const auth = await pb.collection('users').authWithOAuth2Code(
-      flow.provider,
-      code,
-      flow.verifier,
-      flow.redirectUrl,
-      {},
-      { expand: 'user_type' }
-    );
+    const auth = await pb.collection('users').authWithOAuth2Code(flow.provider, code, flow.verifier, flow.redirectUrl);
+    const user = await pb.collection('users').getOne(auth.record.id, { expand: 'user_type' });
 
-    // Hydrate user record with user_type expanded to ensure permissions
-    let userRecord = auth.record;
-    try {
-      userRecord = await pb.collection('users').getOne(auth.record.id, { expand: 'user_type' });
-    } catch {
-      // fallback to auth.record
-    }
-
-    if (!isAdmin(userRecord)) {
+    if (!isAdmin(user)) {
       pb.authStore.clear();
       error(403, 'บัญชีนี้ไม่มีสิทธิ์ admin');
     }

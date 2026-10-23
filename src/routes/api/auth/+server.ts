@@ -7,14 +7,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
   const pb = createPocketBase();
   try {
     const auth = await pb.collection('users').authWithPassword(email, password, { expand: 'user_type' });
-    let userRecord = auth.record;
-    try {
-      userRecord = await pb.collection('users').getOne(auth.record.id, { expand: 'user_type' });
-    } catch {
-      // fallback
-    }
-
-    if (!isAdmin(userRecord)) {
+    if (!isAdmin(auth.record)) {
       pb.authStore.clear();
       return json({ ok: false, error: 'บัญชีนี้ไม่มีสิทธิ์ admin' }, { status: 403 });
     }
@@ -39,14 +32,7 @@ export const GET: RequestHandler = async ({ request }) => {
   pb.authStore.save(token, null);
   try {
     const auth = await pb.collection('users').authRefresh({ expand: 'user_type' });
-    let userRecord = auth.record;
-    try {
-      userRecord = await pb.collection('users').getOne(auth.record.id, { expand: 'user_type' });
-    } catch {
-      // fallback
-    }
-
-    if (!isAdmin(userRecord)) return json({ authenticated: false }, { status: 403 });
+    if (!isAdmin(auth.record)) return json({ authenticated: false }, { status: 403 });
     return json({ authenticated: true });
   } catch {
     return json({ authenticated: false }, { status: 401 });
