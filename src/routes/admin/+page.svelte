@@ -368,6 +368,20 @@
             </p>
           </div>
 
+          <!-- KMITL OIDC Single Sign-On Button -->
+          <a
+            href="/auth/oidc"
+            class="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600"
+          >
+            <span>เข้าสู่ระบบด้วย KMITL Account (OIDC)</span>
+          </a>
+
+          <div class="my-5 flex items-center gap-3">
+            <div class="h-px flex-1 bg-slate-200"></div>
+            <span class="text-xs text-slate-400 font-medium">หรือเข้าสู่ระบบด้วยรหัสผ่าน</span>
+            <div class="h-px flex-1 bg-slate-200"></div>
+          </div>
+
           <form
             onsubmit={(e) => {
               e.preventDefault();
@@ -406,12 +420,12 @@
             <button
               type="submit"
               disabled={loginLoading}
-              class="w-full rounded-lg bg-orange-500 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50"
+              class="w-full rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50"
             >
               {#if loginLoading}
                 กำลังเข้าสู่ระบบ...
               {:else}
-                เข้าสู่ระบบ
+                เข้าสู่ระบบด้วยรหัสผ่าน
               {/if}
             </button>
           </form>
