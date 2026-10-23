@@ -171,7 +171,9 @@ jobs:
           trap 'rm -rf -- "$deploy_temp"' EXIT
           (umask 077; printf '%s\n' "$ENV_FILE" > "$deploy_temp/.env")
           unset ENV_FILE
-          ssh_options=(-o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15)
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh_options=(-o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15)
           remote="$SSH_USER@$SSH_HOST"
 
           stage='check SSH access and server prerequisites'
@@ -332,7 +334,9 @@ jobs:
       - name: Check application health and save PM2
         run: |
           set -Eeuo pipefail
-          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 \
             "$SSH_USER@$SSH_HOST" "bash -s -- '$DEPLOY_PATH'" <<'REMOTE'
           set -Eeuo pipefail
           stage='load deployment environment'
