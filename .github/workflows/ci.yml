@@ -1,0 +1,33 @@
+name: CI Check & Build
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Check & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: services-portal/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Svelte Check
+        run: npm run check
+
+      - name: Run Vite Build
+        run: npm run build

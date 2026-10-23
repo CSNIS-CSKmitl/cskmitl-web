@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn-svelte/tailwind.css';
+@theme { --font-sans: ui-sans-serif, system-ui, sans-serif; }
+@layer base { * { @apply border-slate-200; } body { @apply bg-slate-50 text-slate-900 font-sans; } }
