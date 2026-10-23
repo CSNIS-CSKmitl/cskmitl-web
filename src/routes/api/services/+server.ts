@@ -24,6 +24,20 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 };
 
+export const PATCH: RequestHandler = async ({ request }) => {
+  const pb = pbFromRequest(request);
+  if (!pb.authStore.isValid) return json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const auth = await pb.collection('users').authRefresh({ expand: 'user_type' });
+    if (!isAdmin(auth.record)) return json({ error: 'Admin role required' }, { status: 403 });
+
+    const { id, ...data } = await request.json();
+    return json(await pb.collection('services').update(id, data));
+  } catch {
+    return json({ error: 'Update failed' }, { status: 400 });
+  }
+};
+
 export const DELETE: RequestHandler = async ({ request }) => {
   const pb = pbFromRequest(request);
   if (!pb.authStore.isValid) return json({ error: 'Unauthorized' }, { status: 401 });

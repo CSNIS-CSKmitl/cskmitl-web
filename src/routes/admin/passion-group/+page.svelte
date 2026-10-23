@@ -3,6 +3,7 @@
   import {
     Plus,
     Trash2,
+    Pencil,
     ArrowLeft,
     X,
     Search,
@@ -14,6 +15,7 @@
   let description = '';
   let url = '';
   let owner_name = '';
+  let editingId: string | null = null;
 
   let groups: any[] = [];
   let loading = true;
@@ -51,34 +53,50 @@
     }
   }
 
-  async function addGroup() {
+  function startEdit(group: any) {
+    editingId = group.id;
+    name = group.name || group.title || '';
+    description = group.description || group.detail || '';
+    url = group.url || group.link || '';
+    owner_name = group.owner_name || '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    name = '';
+    description = '';
+    url = '';
+    owner_name = '';
+  }
+
+  async function saveGroup() {
     if (!name.trim()) {
       notify('error', 'กรุณาระบุชื่อกลุ่ม');
       return;
     }
     submitting = true;
     try {
+      const payload = {
+        name: name.trim(),
+        description: description.trim(),
+        url: url.trim(),
+        owner_name: owner_name.trim()
+      };
+      const isEdit = Boolean(editingId);
       const response = await fetch('/api/passion-group', {
-        method: 'POST',
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          description: description.trim(),
-          url: url.trim(),
-          owner_name: owner_name.trim()
-        })
+        body: JSON.stringify(isEdit ? { id: editingId, ...payload } : payload)
       });
 
       if (response.ok) {
-        notify('success', `เพิ่มกลุ่ม "${name}" สำเร็จ`);
-        name = '';
-        description = '';
-        url = '';
-        owner_name = '';
+        notify('success', isEdit ? `แก้ไขกลุ่ม "${name}" เรียบร้อยแล้ว` : `เพิ่มกลุ่ม "${name}" สำเร็จ`);
+        cancelEdit();
         await fetchGroups();
       } else {
         const data = await response.json().catch(() => ({}));
-        notify('error', data.error || 'เพิ่มข้อมูลไม่สำเร็จ กรุณาลองใหม่');
+        notify('error', data.error || 'บันทึกไม่สำเร็จ กรุณาลองใหม่');
       }
     } catch {
       notify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
@@ -188,16 +206,27 @@
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[380px_1fr]">
-      <!-- Left: Simple Form to Add Group -->
+      <!-- Left: Simple Form to Add or Edit Group -->
       <section class="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
-          เพิ่มกลุ่มใหม่
-        </h2>
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h2 class="text-base font-bold text-slate-900">
+            {editingId ? 'แก้ไขกลุ่ม' : 'เพิ่มกลุ่มใหม่'}
+          </h2>
+          {#if editingId}
+            <button
+              type="button"
+              onclick={cancelEdit}
+              class="text-xs font-semibold text-slate-500 hover:text-slate-800"
+            >
+              ยกเลิก
+            </button>
+          {/if}
+        </div>
 
         <form
           onsubmit={(event) => {
             event.preventDefault();
-            addGroup();
+            saveGroup();
           }}
           class="mt-4 space-y-3.5"
         >
@@ -246,17 +275,30 @@
             ></textarea>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            class="w-full rounded-lg bg-orange-500 py-2.5 text-xs font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50"
-          >
-            {#if submitting}
-              กำลังบันทึก...
-            {:else}
-              เพิ่ม Passion Group
+          <div class="flex gap-2">
+            {#if editingId}
+              <button
+                type="button"
+                onclick={cancelEdit}
+                class="w-1/3 rounded-lg border border-slate-200 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                ยกเลิก
+              </button>
             {/if}
-          </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              class="flex-1 rounded-lg bg-orange-500 py-2.5 text-xs font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50"
+            >
+              {#if submitting}
+                กำลังบันทึก...
+              {:else if editingId}
+                บันทึกการแก้ไข
+              {:else}
+                เพิ่ม Passion Group
+              {/if}
+            </button>
+          </div>
         </form>
       </section>
 
@@ -305,14 +347,24 @@
                       {/if}
                     </div>
 
-                    <button
-                      onclick={() => deleteGroup(group.id, group.name || group.title || 'กลุ่มนี้')}
-                      title="ลบกลุ่มนี้"
-                      class="text-slate-400 transition hover:text-red-600 p-1"
-                      aria-label="ลบกลุ่มนี้"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                    <div class="flex items-center gap-1">
+                      <button
+                        onclick={() => startEdit(group)}
+                        title="แก้ไขกลุ่มนี้"
+                        class="p-1 text-slate-400 transition hover:text-orange-600"
+                        aria-label="แก้ไขกลุ่มนี้"
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        onclick={() => deleteGroup(group.id, group.name || group.title || 'กลุ่มนี้')}
+                        title="ลบกลุ่มนี้"
+                        class="p-1 text-slate-400 transition hover:text-rose-600"
+                        aria-label="ลบกลุ่มนี้"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </div>
 
                   <p class="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-500">

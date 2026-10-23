@@ -5,6 +5,7 @@
     Layers,
     Plus,
     Trash2,
+    Pencil,
     RefreshCw,
     Search,
     X,
@@ -34,15 +35,18 @@
   let searchService = '';
   let filterServiceType = 'ทั้งหมด';
 
-  // Modals
-  let showAddGroupModal = false;
+  // Passion Group Modal (Add / Edit)
+  let showGroupModal = false;
+  let editingGroupId: string | null = null;
   let groupName = '';
   let groupDescription = '';
   let groupUrl = '';
   let groupOwner = '';
   let submittingGroup = false;
 
-  let showAddServiceModal = false;
+  // Service Modal (Add / Edit)
+  let showServiceModal = false;
+  let editingServiceId: string | null = null;
   let serviceName = '';
   let serviceDescription = '';
   let serviceUrl = '';
@@ -153,34 +157,53 @@
     }
   }
 
-  async function handleAddGroup() {
+  // --- PASSION GROUP ACTIONS ---
+  function openAddGroup() {
+    editingGroupId = null;
+    groupName = '';
+    groupDescription = '';
+    groupUrl = '';
+    groupOwner = '';
+    showGroupModal = true;
+  }
+
+  function openEditGroup(group: any) {
+    editingGroupId = group.id;
+    groupName = group.name || group.title || '';
+    groupDescription = group.description || group.detail || '';
+    groupUrl = group.url || group.link || '';
+    groupOwner = group.owner_name || '';
+    showGroupModal = true;
+  }
+
+  async function handleSaveGroup() {
     if (!groupName.trim()) {
       notify('error', 'กรุณาระบุชื่อกลุ่ม');
       return;
     }
     submittingGroup = true;
     try {
+      const payload = {
+        name: groupName.trim(),
+        description: groupDescription.trim(),
+        url: groupUrl.trim(),
+        owner_name: groupOwner.trim()
+      };
+
+      const isEdit = Boolean(editingGroupId);
       const res = await fetch('/api/passion-group', {
-        method: 'POST',
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          name: groupName.trim(),
-          description: groupDescription.trim(),
-          url: groupUrl.trim(),
-          owner_name: groupOwner.trim()
-        })
+        body: JSON.stringify(isEdit ? { id: editingGroupId, ...payload } : payload)
       });
+
       if (res.ok) {
-        notify('success', `เพิ่ม "${groupName}" เรียบร้อยแล้ว`);
-        groupName = '';
-        groupDescription = '';
-        groupUrl = '';
-        groupOwner = '';
-        showAddGroupModal = false;
+        notify('success', isEdit ? `แก้ไขกลุ่ม "${groupName}" เรียบร้อยแล้ว` : `เพิ่ม "${groupName}" เรียบร้อยแล้ว`);
+        showGroupModal = false;
         await loadGroups();
       } else {
         const data = await res.json().catch(() => ({}));
-        notify('error', data.error || 'เพิ่มข้อมูลไม่สำเร็จ กรุณาลองใหม่');
+        notify('error', data.error || 'บันทึกไม่สำเร็จ กรุณาลองใหม่');
       }
     } catch {
       notify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
@@ -208,33 +231,55 @@
     }
   }
 
-  async function handleAddService() {
+  // --- SERVICE ACTIONS ---
+  function openAddService() {
+    editingServiceId = null;
+    serviceName = '';
+    serviceDescription = '';
+    serviceUrl = '';
+    serviceType = 'Web app';
+    serviceStatus = 'พร้อมใช้งาน';
+    showServiceModal = true;
+  }
+
+  function openEditService(service: any) {
+    editingServiceId = service.id;
+    serviceName = service.name || '';
+    serviceDescription = service.description || '';
+    serviceUrl = service.url || '';
+    serviceType = service.type || 'Web app';
+    serviceStatus = service.status || 'พร้อมใช้งาน';
+    showServiceModal = true;
+  }
+
+  async function handleSaveService() {
     if (!serviceName.trim()) {
       notify('error', 'กรุณาระบุชื่อบริการ');
       return;
     }
     submittingService = true;
     try {
+      const payload = {
+        name: serviceName.trim(),
+        description: serviceDescription.trim(),
+        type: serviceType,
+        status: serviceStatus,
+        url: serviceUrl.trim() || undefined
+      };
+
+      const isEdit = Boolean(editingServiceId);
       const res = await fetch('/api/services', {
-        method: 'POST',
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          name: serviceName.trim(),
-          description: serviceDescription.trim(),
-          type: serviceType,
-          status: serviceStatus,
-          url: serviceUrl.trim() || undefined
-        })
+        body: JSON.stringify(isEdit ? { id: editingServiceId, ...payload } : payload)
       });
+
       if (res.ok) {
-        notify('success', `เพิ่มบริการ "${serviceName}" เรียบร้อยแล้ว`);
-        serviceName = '';
-        serviceDescription = '';
-        serviceUrl = '';
-        showAddServiceModal = false;
+        notify('success', isEdit ? `แก้ไขบริการ "${serviceName}" เรียบร้อยแล้ว` : `เพิ่มบริการ "${serviceName}" เรียบร้อยแล้ว`);
+        showServiceModal = false;
         await loadServices();
       } else {
-        notify('error', 'เพิ่มบริการไม่สำเร็จ');
+        notify('error', 'บันทึกบริการไม่สำเร็จ');
       }
     } catch {
       notify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
@@ -285,7 +330,7 @@
 </svelte:head>
 
 <div class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
-  <!-- Toast Notification (Clean & Non-neon) -->
+  <!-- Toast Notification -->
   {#if notification}
     <aside
       aria-label="Notification"
@@ -315,7 +360,7 @@
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
       <div class="flex items-center gap-3">
         <a href="/" class="flex items-center gap-2.5 font-bold hover:opacity-90 transition">
-          <span class="grid size-9 place-items-center rounded-xl bg-orange-500 text-sm font-bold text-white">
+          <span class="grid size-9 place-items-center rounded-xl bg-orange-500 text-sm font-bold text-white shadow-sm">
             CS
           </span>
           <span class="text-sm font-bold text-slate-900">CS-KMITL Hub</span>
@@ -453,12 +498,8 @@
             รีเฟรช
           </button>
 
-          <!-- Easy Access Add Passion Group Button in Brand Orange -->
           <button
-            onclick={() => {
-              activeTab = 'passion-group';
-              showAddGroupModal = true;
-            }}
+            onclick={openAddGroup}
             class="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-orange-600"
           >
             <Plus size={15} />
@@ -467,7 +508,7 @@
         </div>
       </div>
 
-      <!-- Overview Cards in Brand Orange style -->
+      <!-- Overview Cards -->
       <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div
           class="rounded-2xl border border-slate-200 bg-white p-5 cursor-pointer shadow-sm transition hover:border-orange-300"
@@ -491,7 +532,7 @@
               onclick={(e) => {
                 e.stopPropagation();
                 activeTab = 'passion-group';
-                showAddGroupModal = true;
+                openAddGroup();
               }}
               class="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100"
             >
@@ -522,7 +563,7 @@
               onclick={(e) => {
                 e.stopPropagation();
                 activeTab = 'services';
-                showAddServiceModal = true;
+                openAddService();
               }}
               class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
             >
@@ -568,7 +609,7 @@
             </div>
 
             <button
-              onclick={() => (showAddGroupModal = true)}
+              onclick={openAddGroup}
               class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-orange-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-orange-600"
             >
               <Plus size={14} />
@@ -588,7 +629,7 @@
               </p>
               {#if !searchGroup}
                 <button
-                  onclick={() => (showAddGroupModal = true)}
+                  onclick={openAddGroup}
                   class="mt-3 text-xs font-semibold text-orange-600 hover:underline"
                 >
                   + เพิ่ม Passion Group กลุ่มแรก
@@ -612,14 +653,25 @@
                         {/if}
                       </div>
 
-                      <button
-                        onclick={() => handleDeleteGroup(group.id, group.name || group.title || 'กลุ่มนี้')}
-                        title="ลบกลุ่ม"
-                        class="text-slate-400 transition hover:text-red-600 p-1"
-                        aria-label="ลบกลุ่ม"
-                      >
-                        <Trash2 size={15} />
-                      </button>
+                      <!-- Action Buttons: Edit & Delete -->
+                      <div class="flex items-center gap-1">
+                        <button
+                          onclick={() => openEditGroup(group)}
+                          title="แก้ไขกลุ่มนี้"
+                          class="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                          aria-label="แก้ไขกลุ่มนี้"
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          onclick={() => handleDeleteGroup(group.id, group.name || group.title || 'กลุ่มนี้')}
+                          title="ลบกลุ่ม"
+                          class="rounded-lg p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                          aria-label="ลบกลุ่ม"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
                     </div>
 
                     <p class="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-500">
@@ -685,7 +737,7 @@
             </div>
 
             <button
-              onclick={() => (showAddServiceModal = true)}
+              onclick={openAddService}
               class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 transition hover:bg-slate-50"
             >
               <Plus size={14} />
@@ -702,7 +754,7 @@
             <div class="rounded-2xl border border-dashed border-slate-300 bg-white py-12 text-center">
               <p class="text-sm text-slate-500">ไม่พบบริการในระบบ</p>
               <button
-                onclick={() => (showAddServiceModal = true)}
+                onclick={openAddService}
                 class="mt-3 text-xs font-semibold text-orange-600 hover:underline"
               >
                 + เพิ่มบริการใหม่
@@ -720,20 +772,41 @@
                           <span class="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
                             {service.type}
                           </span>
+                          <!-- Status as a clean dot + text -->
                           {#if service.status}
-                            <span class="text-xs text-emerald-700">{service.status}</span>
+                            <span class="flex items-center gap-1.5 text-xs text-slate-500">
+                              <span
+                                class="size-2 rounded-full {service.status === 'พร้อมใช้งาน'
+                                  ? 'bg-emerald-500'
+                                  : service.status === 'กำลังพัฒนา'
+                                    ? 'bg-amber-500'
+                                    : 'bg-rose-500'}"
+                              ></span>
+                              <span>{service.status}</span>
+                            </span>
                           {/if}
                         </div>
                       </div>
 
-                      <button
-                        onclick={() => handleDeleteService(service.id, service.name)}
-                        title="ลบบริการ"
-                        class="text-slate-400 transition hover:text-red-600 p-1"
-                        aria-label="ลบบริการ"
-                      >
-                        <Trash2 size={15} />
-                      </button>
+                      <!-- Action Buttons: Edit & Delete -->
+                      <div class="flex items-center gap-1">
+                        <button
+                          onclick={() => openEditService(service)}
+                          title="แก้ไขบริการนี้"
+                          class="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                          aria-label="แก้ไขบริการนี้"
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          onclick={() => handleDeleteService(service.id, service.name)}
+                          title="ลบบริการ"
+                          class="rounded-lg p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                          aria-label="ลบบริการ"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
                     </div>
 
                     <p class="mt-3 text-xs leading-relaxed text-slate-500">
@@ -771,9 +844,9 @@
 </div>
 
 <!-- ============================================== -->
-<!-- MODAL: ADD PASSION GROUP                       -->
+<!-- MODAL: ADD / EDIT PASSION GROUP                -->
 <!-- ============================================== -->
-{#if showAddGroupModal}
+{#if showGroupModal}
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
     role="dialog"
@@ -785,10 +858,10 @@
     >
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h2 id="modal-group-title" class="text-base font-bold text-slate-900">
-          เพิ่ม Passion Group
+          {editingGroupId ? 'แก้ไข Passion Group' : 'เพิ่ม Passion Group'}
         </h2>
         <button
-          onclick={() => (showAddGroupModal = false)}
+          onclick={() => (showGroupModal = false)}
           class="rounded p-1 text-slate-400 hover:text-slate-700"
           aria-label="ปิด Modal"
         >
@@ -799,7 +872,7 @@
       <form
         onsubmit={(e) => {
           e.preventDefault();
-          handleAddGroup();
+          handleSaveGroup();
         }}
         class="mt-4 space-y-3.5"
       >
@@ -859,7 +932,7 @@
         <div class="mt-5 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
           <button
             type="button"
-            onclick={() => (showAddGroupModal = false)}
+            onclick={() => (showGroupModal = false)}
             class="rounded-lg border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
           >
             ยกเลิก
@@ -872,7 +945,7 @@
             {#if submittingGroup}
               กำลังบันทึก...
             {:else}
-              บันทึก Passion Group
+              {editingGroupId ? 'บันทึกการแก้ไข' : 'บันทึก Passion Group'}
             {/if}
           </button>
         </div>
@@ -882,9 +955,9 @@
 {/if}
 
 <!-- ============================================== -->
-<!-- MODAL: ADD SERVICE                             -->
+<!-- MODAL: ADD / EDIT SERVICE                      -->
 <!-- ============================================== -->
-{#if showAddServiceModal}
+{#if showServiceModal}
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
     role="dialog"
@@ -896,10 +969,10 @@
     >
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h2 id="modal-service-title" class="text-base font-bold text-slate-900">
-          เพิ่มบริการใหม่
+          {editingServiceId ? 'แก้ไขบริการ' : 'เพิ่มบริการใหม่'}
         </h2>
         <button
-          onclick={() => (showAddServiceModal = false)}
+          onclick={() => (showServiceModal = false)}
           class="rounded p-1 text-slate-400 hover:text-slate-700"
           aria-label="ปิด Modal"
         >
@@ -910,7 +983,7 @@
       <form
         onsubmit={(e) => {
           e.preventDefault();
-          handleAddService();
+          handleSaveService();
         }}
         class="mt-4 space-y-3.5"
       >
@@ -987,7 +1060,7 @@
         <div class="mt-5 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
           <button
             type="button"
-            onclick={() => (showAddServiceModal = false)}
+            onclick={() => (showServiceModal = false)}
             class="rounded-lg border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
           >
             ยกเลิก
@@ -1000,7 +1073,7 @@
             {#if submittingService}
               กำลังบันทึก...
             {:else}
-              บันทึกบริการ
+              {editingServiceId ? 'บันทึกการแก้ไข' : 'บันทึกบริการ'}
             {/if}
           </button>
         </div>

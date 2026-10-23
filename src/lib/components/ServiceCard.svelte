@@ -41,16 +41,17 @@
       <svelte:component this={Icon} size={22} />
     </div>
 
-    <div class="flex items-start justify-between gap-2">
+    <div class="flex items-center justify-between gap-2">
       <h3 class="text-lg font-bold text-slate-900">{service.name}</h3>
       {#if service.status}
         <span
-          class="rounded-full px-2.5 py-0.5 text-xs font-semibold {service.status === 'พร้อมใช้งาน'
-            ? 'bg-emerald-50 text-emerald-700'
-            : 'bg-amber-50 text-amber-700'}"
-        >
-          {service.status}
-        </span>
+          class="size-2.5 rounded-full {service.status === 'พร้อมใช้งาน'
+            ? 'bg-emerald-500'
+            : service.status === 'กำลังพัฒนา'
+              ? 'bg-amber-500'
+              : 'bg-rose-500'}"
+          title={service.status}
+        ></span>
       {/if}
     </div>
 
