@@ -2,7 +2,6 @@
 
 > ศูนย์กลางเชื่อมต่อบริการดิจิทัล (Services Hub) และคอมมูนิตี้กลุ่มความสนใจ (Passion Groups) สำหรับนักศึกษาและบุคลากร ภาควิชาวิทยาการคอมพิวเตอร์ สจล. (CS-KMITL)
 
-[![CI Check & Build](https://github.com/CSNIS-CSKmitl/cskmitl-web/actions/workflows/ci.yml/badge.svg)](https://github.com/CSNIS-CSKmitl/cskmitl-web/actions/workflows/ci.yml)
 [![Deploy Services Portal](https://github.com/CSNIS-CSKmitl/cskmitl-web/actions/workflows/deploy.yml/badge.svg)](https://github.com/CSNIS-CSKmitl/cskmitl-web/actions/workflows/deploy.yml)
 
 ---
