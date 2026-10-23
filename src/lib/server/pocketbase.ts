@@ -13,5 +13,17 @@ export function pbFromRequest(request: Request) {
 }
 
 export function isAdmin(record: any) {
-  return record?.expand?.user_type?.type === 'admin' || record?.role === 'admin';
+  if (!record) return false;
+  const typeName = record?.expand?.user_type?.type?.toLowerCase();
+  const typeId = record?.user_type;
+  const role = record?.role?.toLowerCase();
+
+  return (
+    typeName === 'admin' ||
+    typeName === 'superadmin' ||
+    typeId === '000000000000000' ||
+    typeId === '000000000000009' ||
+    role === 'admin' ||
+    role === 'superadmin'
+  );
 }
