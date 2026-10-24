@@ -26,6 +26,11 @@
 
   // Data
   let services: any[] = [];
+
+  function actor(record: any, field: 'created_by' | 'updated_by') {
+    const expanded = record.expand?.[field];
+    return expanded?.name || expanded?.email || record[field] || '-';
+  }
   let passionGroups: any[] = [];
   let loadingServices = false;
   let loadingGroups = false;
@@ -677,6 +682,7 @@
                     <p class="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-500">
                       {group.description || group.detail || 'ไม่มีรายละเอียดเพิ่มเติม'}
                     </p>
+                    <p class="mt-2 text-[10px] text-slate-400">เพิ่มโดย {actor(group, 'created_by')} · แก้ไขโดย {actor(group, 'updated_by')}</p>
                   </div>
 
                   <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
@@ -812,6 +818,7 @@
                     <p class="mt-3 text-xs leading-relaxed text-slate-500">
                       {service.description || 'ไม่มีรายละเอียด'}
                     </p>
+                    <p class="mt-2 text-[10px] text-slate-400">เพิ่มโดย {actor(service, 'created_by')} · แก้ไขโดย {actor(service, 'updated_by')}</p>
                   </div>
 
                   <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
