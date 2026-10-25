@@ -1,5 +1,7 @@
 # CS-KMITL Hub (Services Portal & Community)
 
+[แผนภาพเส้นทางการกดใช้งานและไฟล์ที่ถูกเรียก](CLICK_FLOW.md)
+
 > ศูนย์กลางเชื่อมต่อบริการดิจิทัล (Services Hub) และคอมมูนิตี้กลุ่มความสนใจ (Passion Groups) สำหรับนักศึกษาและบุคลากร ภาควิชาวิทยาการคอมพิวเตอร์ สจล. (CS-KMITL)
 
 [![Deploy Services Portal](https://github.com/CSNIS-CSKmitl/cskmitl-web/actions/workflows/deploy.yml/badge.svg)](https://github.com/CSNIS-CSKmitl/cskmitl-web/actions/workflows/deploy.yml)
