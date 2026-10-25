@@ -57,7 +57,7 @@
     </div>
   </section>
 </main>
-<footer class="border-t bg-white px-6 py-4 text-center text-xs text-slate-500">© {new Date().getFullYear()} · ผู้จัดทำ <a href="https://github.com/techasit5415" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-700 hover:text-orange-600 hover:underline">Techasit Vanitpattarakul</a></footer>
+<footer class="border-t bg-white px-6 py-4 text-center text-xs text-slate-500">© {new Date().getFullYear()} · <a href="https://github.com/techasit5415" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-700 hover:text-orange-600 hover:underline">Techasit Vanitpattarakul</a></footer>
 </div>
 
 <style>
