@@ -23,14 +23,14 @@
 
 ## 2. สแต็กเทคโนโลยี (Tech Stack)
 
-| ส่วนประกอบ | เทคโนโลยีที่ใช้ | รายละเอียด |
-| :--- | :--- | :--- |
-| **Framework** | [Svelte 5](https://svelte.dev/) + [SvelteKit 2](https://kit.svelte.dev/) | Runes, SSR, API Endpoints |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Theme @theme, Utility-first CSS |
-| **Icons** | [@lucide/svelte](https://lucide.dev/) | ไอคอนโมเดิร์น คมชัด เรียบหรู |
-| **Backend & Database** | [PocketBase](https://pocketbase.io/) | Collections `services`, `passion_group`, `users` |
-| **Runtime Adapter** | `@sveltejs/adapter-node` | Node.js standalone bundle ผ่าน `server.js` |
-| **Process Manager** | PM2 | รัน Background Daemon บน Production Server |
+| ส่วนประกอบ             | เทคโนโลยีที่ใช้                                                          | รายละเอียด                                       |
+| :--------------------- | :----------------------------------------------------------------------- | :----------------------------------------------- |
+| **Framework**          | [Svelte 5](https://svelte.dev/) + [SvelteKit 2](https://kit.svelte.dev/) | Runes, SSR, API Endpoints                        |
+| **Styling**            | [Tailwind CSS v4](https://tailwindcss.com/)                              | Theme @theme, Utility-first CSS                  |
+| **Icons**              | [@lucide/svelte](https://lucide.dev/)                                    | ไอคอนโมเดิร์น คมชัด เรียบหรู                     |
+| **Backend & Database** | [PocketBase](https://pocketbase.io/)                                     | Collections `services`, `passion_group`, `users` |
+| **Runtime Adapter**    | `@sveltejs/adapter-node`                                                 | Node.js standalone bundle ผ่าน `server.js`       |
+| **Process Manager**    | PM2                                                                      | รัน Background Daemon บน Production Server       |
 
 ---
 
@@ -67,11 +67,13 @@ flowchart TD
 ## 4. เริ่มต้นติดตั้งและรันในเครื่อง (Local Development)
 
 ### ความต้องการของระบบ (Prerequisites)
+
 - Node.js version 22 หรือ 24
 - npm version 10+
 - PocketBase server ที่เข้าถึงได้ (เช่น `http://192.168.15.14:8080` หรือ local instance)
 
 ### ขั้นตอนการรัน
+
 ```bash
 # 1. ติดตั้ง Dependencies
 npm install
@@ -86,6 +88,7 @@ npm run dev
 เปิดเบราว์เซอร์ไปที่: `http://localhost:5173/`
 
 ### คำสั่งสคริปต์ที่สำคัญ
+
 ```bash
 npm run check   # ตรวจสอบ TypeScript & Svelte syntax ด้วย svelte-check
 npm run build   # Build production standalone bundle ไปที่โฟลเดอร์ /build
@@ -96,12 +99,12 @@ npm run preview # ทดลองรัน production bundle ในเครื�
 
 ## 5. การตั้งค่า Environment Variables (`.env`)
 
-| ตัวแปร | ตัวอย่างค่า | คำอธิบาย |
-| :--- | :--- | :--- |
-| `POCKETBASE_URL` | `http://192.168.15.14:8080` | URL ชี้ไปยัง PocketBase Core Server ฝั่ง Server-side |
-| `PUBLIC_POCKETBASE_URL` | `http://192.168.15.14:8080` | (ตัวเลือก) URL PocketBase สำหรับฝั่ง Client-side |
-| `PORT` | `3000` | พอร์ตที่ Node.js รันสำหรับ Production |
-| `HOST` | `127.0.0.1` | Bind Host IP สำหรับ Production |
+| ตัวแปร                  | ตัวอย่างค่า                 | คำอธิบาย                                             |
+| :---------------------- | :-------------------------- | :--------------------------------------------------- |
+| `POCKETBASE_URL`        | `http://192.168.15.14:8080` | URL ชี้ไปยัง PocketBase Core Server ฝั่ง Server-side |
+| `PUBLIC_POCKETBASE_URL` | `http://192.168.15.14:8080` | (ตัวเลือก) URL PocketBase สำหรับฝั่ง Client-side     |
+| `PORT`                  | `3000`                      | พอร์ตที่ Node.js รันสำหรับ Production                |
+| `HOST`                  | `127.0.0.1`                 | Bind Host IP สำหรับ Production                       |
 
 ---
 
