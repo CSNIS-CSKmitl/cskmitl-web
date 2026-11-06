@@ -11,13 +11,17 @@
     Terminal
   } from '@lucide/svelte';
 
-  export let service: {
-    name: string;
-    description: string;
-    type: string;
-    status?: string;
-    url?: string;
-  };
+  interface Props {
+    service: {
+      name: string;
+      description: string;
+      type: string;
+      status?: string;
+      url?: string;
+    };
+  }
+
+  let { service }: Props = $props();
 
   const icons: Record<string, any> = {
     Announcements: Megaphone,
@@ -30,7 +34,7 @@
     'init.d': Terminal
   };
 
-  $: Icon = icons[service.name] || Server;
+  let Icon = $derived(icons[service.name] || Server);
 </script>
 
 <article
@@ -38,7 +42,7 @@
 >
   <div>
     <div class="mb-5 grid size-12 place-items-center rounded-2xl bg-orange-50 text-orange-600">
-      <svelte:component this={Icon} size={22} />
+      <Icon size={22} />
     </div>
 
     <div class="flex items-center justify-between gap-2">

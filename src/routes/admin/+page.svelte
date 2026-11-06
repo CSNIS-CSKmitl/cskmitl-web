@@ -15,52 +15,52 @@
   } from '@lucide/svelte';
 
   // Auth State
-  let loggedIn = false;
-  let authChecking = true;
-  let email = '';
-  let password = '';
-  let loginLoading = false;
+  let loggedIn = $state(false);
+  let authChecking = $state(true);
+  let email = $state('');
+  let password = $state('');
+  let loginLoading = $state(false);
 
   // Active Tab: 'passion-group' | 'services'
-  let activeTab: 'passion-group' | 'services' = 'passion-group';
+  let activeTab = $state<'passion-group' | 'services'>('passion-group');
 
   // Data
-  let services: any[] = [];
+  let services = $state<any[]>([]);
 
   function actor(record: any, field: 'created_by' | 'updated_by') {
     const expanded = record.expand?.[field];
     return expanded?.name || expanded?.email || record[field] || '-';
   }
-  let passionGroups: any[] = [];
-  let loadingServices = false;
-  let loadingGroups = false;
+  let passionGroups = $state<any[]>([]);
+  let loadingServices = $state(false);
+  let loadingGroups = $state(false);
 
   // Filter / Search
-  let searchGroup = '';
-  let searchService = '';
-  let filterServiceType = 'ทั้งหมด';
+  let searchGroup = $state('');
+  let searchService = $state('');
+  let filterServiceType = $state('ทั้งหมด');
 
   // Passion Group Modal (Add / Edit)
-  let showGroupModal = false;
-  let editingGroupId: string | null = null;
-  let groupName = '';
-  let groupDescription = '';
-  let groupUrl = '';
-  let groupOwner = '';
-  let submittingGroup = false;
+  let showGroupModal = $state(false);
+  let editingGroupId = $state<string | null>(null);
+  let groupName = $state('');
+  let groupDescription = $state('');
+  let groupUrl = $state('');
+  let groupOwner = $state('');
+  let submittingGroup = $state(false);
 
   // Service Modal (Add / Edit)
-  let showServiceModal = false;
-  let editingServiceId: string | null = null;
-  let serviceName = '';
-  let serviceDescription = '';
-  let serviceUrl = '';
-  let serviceType = 'Web app';
-  let serviceStatus = 'พร้อมใช้งาน';
-  let submittingService = false;
+  let showServiceModal = $state(false);
+  let editingServiceId = $state<string | null>(null);
+  let serviceName = $state('');
+  let serviceDescription = $state('');
+  let serviceUrl = $state('');
+  let serviceType = $state('Web app');
+  let serviceStatus = $state('พร้อมใช้งาน');
+  let submittingService = $state(false);
 
   // Feedback Notification
-  let notification: { type: 'success' | 'error'; text: string } | null = null;
+  let notification = $state<{ type: 'success' | 'error'; text: string } | null>(null);
   let notificationTimer: any = null;
 
   function notify(type: 'success' | 'error', text: string) {
@@ -312,22 +312,26 @@
     }
   }
 
-  $: filteredGroups = passionGroups.filter((g) => {
-    const term = searchGroup.toLowerCase();
-    const name = (g.name || g.title || '').toLowerCase();
-    const desc = (g.description || g.detail || '').toLowerCase();
-    const owner = (g.owner_name || '').toLowerCase();
-    return name.includes(term) || desc.includes(term) || owner.includes(term);
-  });
+  let filteredGroups = $derived(
+    passionGroups.filter((g) => {
+      const term = searchGroup.toLowerCase();
+      const name = (g.name || g.title || '').toLowerCase();
+      const desc = (g.description || g.detail || '').toLowerCase();
+      const owner = (g.owner_name || '').toLowerCase();
+      return name.includes(term) || desc.includes(term) || owner.includes(term);
+    })
+  );
 
-  $: filteredServices = services.filter((s) => {
-    const term = searchService.toLowerCase();
-    const matchesType = filterServiceType === 'ทั้งหมด' || s.type === filterServiceType;
-    const matchesSearch =
-      (s.name || '').toLowerCase().includes(term) ||
-      (s.description || '').toLowerCase().includes(term);
-    return matchesType && matchesSearch;
-  });
+  let filteredServices = $derived(
+    services.filter((s) => {
+      const term = searchService.toLowerCase();
+      const matchesType = filterServiceType === 'ทั้งหมด' || s.type === filterServiceType;
+      const matchesSearch =
+        (s.name || '').toLowerCase().includes(term) ||
+        (s.description || '').toLowerCase().includes(term);
+      return matchesType && matchesSearch;
+    })
+  );
 </script>
 
 <svelte:head>

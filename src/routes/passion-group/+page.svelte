@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import { Search, ArrowLeft, ArrowUpRight, Users, Loader2 } from '@lucide/svelte';
 
-  let groups: any[] = [];
-  let loading = true;
-  let searchQuery = '';
+  let groups = $state<any[]>([]);
+  let loading = $state(true);
+  let searchQuery = $state('');
 
   const excludedGroups = new Set(['7uhcfkj5an632r8', '000000000000006']);
 
@@ -22,14 +22,16 @@
     }
   });
 
-  $: filteredGroups = groups.filter((group) => {
-    const term = searchQuery.toLowerCase().trim();
-    if (!term) return true;
-    const name = (group.name || group.title || '').toLowerCase();
-    const desc = (group.description || group.detail || '').toLowerCase();
-    const owner = (group.owner_name || '').toLowerCase();
-    return name.includes(term) || desc.includes(term) || owner.includes(term);
-  });
+  let filteredGroups = $derived(
+    groups.filter((group) => {
+      const term = searchQuery.toLowerCase().trim();
+      if (!term) return true;
+      const name = (group.name || group.title || '').toLowerCase();
+      const desc = (group.description || group.detail || '').toLowerCase();
+      const owner = (group.owner_name || '').toLowerCase();
+      return name.includes(term) || desc.includes(term) || owner.includes(term);
+    })
+  );
 </script>
 
 <svelte:head>

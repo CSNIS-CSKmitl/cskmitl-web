@@ -11,18 +11,18 @@
     ArrowUpRight
   } from '@lucide/svelte';
 
-  let name = '';
-  let description = '';
-  let url = '';
-  let owner_name = '';
-  let editingId: string | null = null;
+  let name = $state('');
+  let description = $state('');
+  let url = $state('');
+  let owner_name = $state('');
+  let editingId = $state<string | null>(null);
 
-  let groups: any[] = [];
-  let loading = true;
-  let submitting = false;
-  let searchTerm = '';
+  let groups = $state<any[]>([]);
+  let loading = $state(true);
+  let submitting = $state(false);
+  let searchTerm = $state('');
 
-  let notification: { type: 'success' | 'error'; text: string } | null = null;
+  let notification = $state<{ type: 'success' | 'error'; text: string } | null>(null);
   let timer: any = null;
 
   function notify(type: 'success' | 'error', text: string) {
@@ -124,13 +124,15 @@
     }
   }
 
-  $: filteredGroups = groups.filter((g) => {
-    const q = searchTerm.toLowerCase();
-    const gName = (g.name || g.title || '').toLowerCase();
-    const gDesc = (g.description || g.detail || '').toLowerCase();
-    const gOwner = (g.owner_name || '').toLowerCase();
-    return gName.includes(q) || gDesc.includes(q) || gOwner.includes(q);
-  });
+  let filteredGroups = $derived(
+    groups.filter((g) => {
+      const q = searchTerm.toLowerCase();
+      const gName = (g.name || g.title || '').toLowerCase();
+      const gDesc = (g.description || g.detail || '').toLowerCase();
+      const gOwner = (g.owner_name || '').toLowerCase();
+      return gName.includes(q) || gDesc.includes(q) || gOwner.includes(q);
+    })
+  );
 </script>
 
 <svelte:head>

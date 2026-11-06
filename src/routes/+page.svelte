@@ -2,15 +2,24 @@
   import { onMount } from "svelte";
   import { Search } from "@lucide/svelte";
   import ServiceCard from "$lib/components/ServiceCard.svelte";
-  let services: any[] = [];
-  let loading = true;
-  let query = "";
-  let filter = "ทั้งหมด";
-  onMount(async () => { const response = await fetch('/api/services'); if (response.ok) services = await response.json(); loading = false; });
-  $: shown = services.filter(
-    (service) =>
-      (filter === "ทั้งหมด" || service.type === filter) &&
-      `${service.name} ${service.description}`.toLowerCase().includes(query.toLowerCase()),
+
+  let services = $state<any[]>([]);
+  let loading = $state(true);
+  let query = $state("");
+  let filter = $state("ทั้งหมด");
+
+  onMount(async () => {
+    const response = await fetch('/api/services');
+    if (response.ok) services = await response.json();
+    loading = false;
+  });
+
+  let shown = $derived(
+    services.filter(
+      (service) =>
+        (filter === "ทั้งหมด" || service.type === filter) &&
+        `${service.name} ${service.description}`.toLowerCase().includes(query.toLowerCase()),
+    )
   );
 </script>
 
@@ -29,31 +38,28 @@
 </header>
 <main class="flex-1 mx-auto w-full max-w-6xl px-6 pb-16">
   <section class="py-16 text-center">
-    <!-- <p class="mb-4 text-sm font-bold uppercase tracking-wider text-orange-600">Computer Science · KMITL</p> -->
     <h1 class="text-4xl font-bold tracking-tight md:text-6xl">CS-KMITL <br /><span class="text-orange-600">Hub</span></h1>
-    <!-- <p class="mx-auto mt-5 max-w-xl text-lg text-slate-500">ค้นหาระบบที่ต้องใช้ หรือกลุ่มที่อยากเข้าร่วม</p> -->
     <div class="mt-8 flex flex-wrap justify-center gap-3"><a href="#services" class="rounded-xl bg-orange-500 px-5 py-3 font-semibold text-white shadow-sm hover:bg-orange-600">เข้า Services →</a><a href="/passion-group" class="rounded-xl border bg-white px-5 py-3 font-semibold hover:border-orange-500">หา Passion Group →</a></div>
-
-
-
   </section>
   <section id="services" class="mt-16">
-    <div class="mb-6 flex items-end justify-between">
-      <div>
-
-      </div>
-
-    </div>
     <div class="mb-6 flex flex-wrap gap-2">
-      {#each ["ทั้งหมด", "Web app", "Backend", "Mobile", "Infrastructure"] as item}<button
+      {#each ["ทั้งหมด", "Web app", "Backend", "Mobile", "Infrastructure"] as item}
+        <button
           onclick={() => (filter = item)}
-          class:active={filter === item}
-          class="rounded-full border px-4 py-2 text-sm transition hover:border-orange-500"
-          >{item}</button
-        >{/each}
+          class={filter === item ? "active rounded-full border px-4 py-2 text-sm transition hover:border-orange-500" : "rounded-full border px-4 py-2 text-sm transition hover:border-orange-500"}
+        >{item}</button>
+      {/each}
     </div>
     <div class="grid justify-center gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {#if loading}<p class="col-span-full py-12 text-center text-slate-500">กำลังโหลดระบบ...</p>{:else if shown.length === 0}<p class="col-span-full py-12 text-center text-slate-500">ยังไม่มีข้อมูลบริการใน PocketBase</p>{:else}{#each shown as service}<ServiceCard {service} />{/each}{/if}
+      {#if loading}
+        <p class="col-span-full py-12 text-center text-slate-500">กำลังโหลดระบบ...</p>
+      {:else if shown.length === 0}
+        <p class="col-span-full py-12 text-center text-slate-500">ยังไม่มีข้อมูลบริการใน PocketBase</p>
+      {:else}
+        {#each shown as service}
+          <ServiceCard {service} />
+        {/each}
+      {/if}
     </div>
   </section>
 </main>
