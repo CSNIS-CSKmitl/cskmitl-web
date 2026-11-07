@@ -1,6 +1,6 @@
 <script lang="ts">
   import {
-    ArrowRight,
+    ArrowUpRight,
     Server,
     Smartphone,
     Megaphone,
@@ -38,34 +38,37 @@
 </script>
 
 <article
-  class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-md"
+  class="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 transition-colors duration-150 hover:border-slate-300"
 >
   <div>
-    <div class="mb-5 grid size-12 place-items-center rounded-2xl bg-orange-50 text-orange-600">
-      <Icon size={22} />
-    </div>
+    <div class="mb-4 flex items-center justify-between">
+      <div class="grid size-9 place-items-center rounded-lg border border-slate-200/80 bg-slate-50 text-slate-700">
+        <Icon size={18} strokeWidth={1.5} />
+      </div>
 
-    <div class="flex items-center justify-between gap-2">
-      <h3 class="text-lg font-bold text-slate-900">{service.name}</h3>
       {#if service.status}
-        <span
-          class="size-2.5 rounded-full {service.status === 'พร้อมใช้งาน'
-            ? 'bg-emerald-500'
-            : service.status === 'กำลังพัฒนา'
-              ? 'bg-amber-500'
-              : 'bg-rose-500'}"
-          title={service.status}
-        ></span>
+        <span class="inline-flex items-center gap-1.5 rounded-md border border-slate-200/60 bg-slate-50 px-2 py-0.5 text-xs text-slate-600">
+          <span
+            class="size-1.5 rounded-full {service.status === 'พร้อมใช้งาน'
+              ? 'bg-emerald-600'
+              : service.status === 'กำลังพัฒนา'
+                ? 'bg-amber-500'
+                : 'bg-rose-500'}"
+          ></span>
+          <span>{service.status}</span>
+        </span>
       {/if}
     </div>
 
-    <p class="mt-3 min-h-12 text-sm leading-relaxed text-slate-500 font-normal">
+    <h3 class="text-base font-semibold text-slate-900">{service.name}</h3>
+
+    <p class="mt-2 min-h-11 text-xs leading-relaxed text-slate-600 font-normal">
       {service.description}
     </p>
   </div>
 
-  <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-sm">
-    <span class="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+  <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
+    <span class="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-[11px] text-slate-600">
       {service.type}
     </span>
 
@@ -74,15 +77,15 @@
         href={service.url}
         target="_blank"
         rel="noreferrer"
-        class="inline-flex items-center gap-1 font-semibold text-orange-600 transition hover:text-orange-700 hover:underline"
+        class="inline-flex items-center gap-1 font-medium text-slate-900 transition-colors hover:text-orange-700"
       >
         <span>เปิดระบบ</span>
-        <ArrowRight size={15} />
+        <ArrowUpRight size={14} strokeWidth={1.5} />
       </a>
     {:else}
-      <button class="inline-flex items-center gap-1 font-semibold text-slate-400">
-        <span>ไม่มีลิงก์</span>
-      </button>
+      <span class="inline-flex items-center text-slate-400">
+        ไม่ได้ระบุลิงก์
+      </span>
     {/if}
   </div>
 </article>

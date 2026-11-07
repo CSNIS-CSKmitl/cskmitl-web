@@ -73,22 +73,22 @@
       <div class="mx-auto max-w-6xl px-6">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-orange-600">Community</p>
-            <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              Passion Group
+            <p class="font-mono text-xs text-orange-700">ชุมชนและชมรมกิจกรรม</p>
+            <h1 class="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              กลุ่มความสนใจ (Passion Groups)
             </h1>
-            <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-500">
-              กลุ่มความสนใจและพื้นที่รวมตัวของคนใน CS-KMITL
+            <p class="mt-1 max-w-xl text-xs leading-relaxed text-slate-500">
+              พื้นที่รวมกลุ่มความสนใจ แลกเปลี่ยนทักษะ และสร้างสรรค์โปรเจกต์ของชาว CS-KMITL
             </p>
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-sm font-medium text-slate-500">
-              ทั้งหมด {groups.length} กลุ่ม
+            <span class="font-mono text-xs text-slate-500">
+              {groups.length} กลุ่ม
             </span>
             <a
               href="/admin?tab=passion-group"
-              class="inline-flex items-center rounded-lg bg-orange-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-orange-600"
+              class="inline-flex h-9 items-center rounded-lg bg-slate-900 px-3.5 text-xs font-medium text-white transition-colors hover:bg-slate-800"
             >
               + เพิ่ม Passion Group
             </a>
@@ -138,23 +138,23 @@
           </p>
         </div>
       {:else}
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {#each filteredGroups as group (group.id)}
-            <article class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
+            <article class="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 transition-colors duration-150 hover:border-slate-300">
               <div>
                 <div class="flex items-start justify-between gap-2">
-                  <h2 class="text-base font-bold text-slate-900">
+                  <h2 class="text-base font-semibold text-slate-900">
                     {group.name || group.title || 'Passion Group'}
                   </h2>
                 </div>
 
                 {#if group.owner_name}
-                  <p class="mt-1 text-xs text-slate-400">
-                    ผู้ดูแล: <span class="font-medium text-slate-600">{group.owner_name}</span>
+                  <p class="mt-1 font-mono text-[11px] text-slate-400">
+                    ผู้ดูแล: <span class="font-sans text-slate-600">{group.owner_name}</span>
                   </p>
                 {/if}
 
-                <p class="mt-3 text-xs leading-relaxed text-slate-500 line-clamp-3 font-normal">
+                <p class="mt-2.5 text-xs leading-relaxed text-slate-600 line-clamp-3 font-normal">
                   {group.description || group.detail || 'กลุ่มความสนใจของชาว CS-KMITL'}
                 </p>
               </div>

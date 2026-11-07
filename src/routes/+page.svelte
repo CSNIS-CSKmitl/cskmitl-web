@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Search } from "@lucide/svelte";
+  import { Search, Layers, Users, ShieldCheck } from "@lucide/svelte";
   import ServiceCard from "$lib/components/ServiceCard.svelte";
 
   let services = $state<any[]>([]);
@@ -9,10 +9,17 @@
   let filter = $state("ทั้งหมด");
 
   onMount(async () => {
-    const response = await fetch('/api/services');
-    if (response.ok) services = await response.json();
-    loading = false;
+    try {
+      const response = await fetch('/api/services');
+      if (response.ok) services = await response.json();
+    } catch {
+      // keep fallback
+    } finally {
+      loading = false;
+    }
   });
+
+  const categories = ["ทั้งหมด", "Web app", "Backend", "Mobile", "Infrastructure"];
 
   let shown = $derived(
     services.filter(
@@ -23,53 +30,121 @@
   );
 </script>
 
-<svelte:head><title>CS-KMITL Hub</title></svelte:head>
-<div class="flex min-h-screen flex-col">
-<header class="border-b bg-white">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-    <div class="flex items-center gap-2 font-bold">
-      <span
-        class="grid size-9 place-items-center rounded-xl bg-orange-500 text-white"
-        >CS</span
-      > CS-KMITL Hub
-    </div>
-    <div class="flex items-center gap-2"><a href="#services" class="hidden rounded-lg border px-3 py-2 text-sm sm:inline-flex">Services</a><a href="/passion-group" class="rounded-lg border px-3 py-2 text-sm">Passion Group</a><a href="/admin" class="rounded-lg border px-3 py-2 text-sm">Admin</a></div>
-  </div>
-</header>
-<main class="flex-1 mx-auto w-full max-w-6xl px-6 pb-16">
-  <section class="py-16 text-center">
-    <h1 class="text-4xl font-bold tracking-tight md:text-6xl">CS-KMITL <br /><span class="text-orange-600">Hub</span></h1>
-    <div class="mt-8 flex flex-wrap justify-center gap-3"><a href="#services" class="rounded-xl bg-orange-500 px-5 py-3 font-semibold text-white shadow-sm hover:bg-orange-600">เข้า Services →</a><a href="/passion-group" class="rounded-xl border bg-white px-5 py-3 font-semibold hover:border-orange-500">หา Passion Group →</a></div>
-  </section>
-  <section id="services" class="mt-16">
-    <div class="mb-6 flex flex-wrap gap-2">
-      {#each ["ทั้งหมด", "Web app", "Backend", "Mobile", "Infrastructure"] as item}
-        <button
-          onclick={() => (filter = item)}
-          class={filter === item ? "active rounded-full border px-4 py-2 text-sm transition hover:border-orange-500" : "rounded-full border px-4 py-2 text-sm transition hover:border-orange-500"}
-        >{item}</button>
-      {/each}
-    </div>
-    <div class="grid justify-center gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {#if loading}
-        <p class="col-span-full py-12 text-center text-slate-500">กำลังโหลดระบบ...</p>
-      {:else if shown.length === 0}
-        <p class="col-span-full py-12 text-center text-slate-500">ยังไม่มีข้อมูลบริการใน PocketBase</p>
-      {:else}
-        {#each shown as service}
-          <ServiceCard {service} />
-        {/each}
-      {/if}
-    </div>
-  </section>
-</main>
-<footer class="border-t bg-white px-6 py-4 text-center text-xs text-slate-500">© {new Date().getFullYear()} · <a href="https://github.com/techasit5415" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-700 hover:text-orange-600 hover:underline">Techasit Vanitpattarakul</a></footer>
-</div>
+<svelte:head>
+  <title>CS-KMITL Hub · ระบบบริการภาควิชา</title>
+</svelte:head>
 
-<style>
-  .active {
-    background: #f97316;
-    color: white;
-    border-color: #f97316;
-  }
-</style>
+<div class="flex min-h-screen flex-col bg-slate-50 text-slate-900 antialiased">
+  <!-- Top Navigation Header -->
+  <header class="border-b border-slate-200/80 bg-white">
+    <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+      <div class="flex items-center gap-3">
+        <span class="grid size-8 place-items-center rounded-lg bg-slate-900 font-mono text-xs font-semibold text-white">
+          CS
+        </span>
+        <div class="flex flex-col">
+          <span class="text-sm font-semibold tracking-tight text-slate-900">CS-KMITL Hub</span>
+          <span class="text-[10px] font-mono text-slate-400">portal.cskmitl.com</span>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-2 text-xs">
+        <a
+          href="/passion-group"
+          class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+        >
+          <Users size={14} strokeWidth={1.5} />
+          <span>กลุ่มกิจกรรม (Passion Group)</span>
+        </a>
+        <a
+          href="/admin"
+          class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+        >
+          <ShieldCheck size={14} strokeWidth={1.5} />
+          <span>จัดการระบบ</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
+    <!-- Breadcrumb & Context Header -->
+    <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <div>
+        <p class="font-mono text-xs text-orange-700">ภาควิชาวิทยาการคอมพิวเตอร์ · สจล.</p>
+        <h1 class="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+          สารบบบริการดิจิทัลและโครงสร้างพื้นฐาน
+        </h1>
+        <p class="mt-1 text-xs text-slate-500">
+          ศูนย์กลางการเข้าถึงบริการ เว็บแอปพลิเคชัน และระบบคอมพิวเตอร์สำหรับนักศึกษาและคณาจารย์
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
+        <span class="size-2 rounded-full bg-emerald-500"></span>
+        <span>{services.length} บริการในสารบบ</span>
+      </div>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+      <!-- Search Input -->
+      <div class="relative flex-1">
+        <Search
+          size={15}
+          strokeWidth={1.5}
+          class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+        />
+        <input
+          type="search"
+          bind:value={query}
+          placeholder="ค้นหาชื่อบริการ คำอธิบาย หรือประเภท…"
+          class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none"
+        />
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-wrap items-center gap-1.5">
+        {#each categories as item}
+          <button
+            type="button"
+            onclick={() => (filter = item)}
+            class="h-9 rounded-lg px-3 text-xs font-medium transition-colors {filter === item
+              ? 'bg-slate-900 text-white'
+              : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'}"
+          >
+            {item}
+          </button>
+        {/each}
+      </div>
+    </div>
+
+    <!-- Services Grid -->
+    <section aria-label="รายการบริการ">
+      {#if loading}
+        <div class="rounded-xl border border-dashed border-slate-200 p-12 text-center text-xs text-slate-500">
+          กำลังเชื่อมต่อและโหลดข้อมูลบริการ…
+        </div>
+      {:else if shown.length === 0}
+        <div class="rounded-xl border border-dashed border-slate-200 p-12 text-center text-xs text-slate-500">
+          ไม่พบบริการที่ตรงกับเงื่อนไขการค้นหา
+        </div>
+      {:else}
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {#each shown as service (service.id || service.name)}
+            <ServiceCard {service} />
+          {/each}
+        </div>
+      {/if}
+    </section>
+  </main>
+
+  <!-- Quiet Footer -->
+  <footer class="border-t border-slate-200/80 bg-white px-6 py-4">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-slate-500 sm:flex-row">
+      <p>© {new Date().getFullYear()} ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ สจล.</p>
+      <p class="font-mono text-[11px] text-slate-400">CS-KMITL Operational Hub</p>
+    </div>
+  </footer>
+</div>
