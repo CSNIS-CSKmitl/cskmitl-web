@@ -527,15 +527,15 @@
           onkeydown={(e) => { if (e.key === 'Enter') activeTab = 'passion-group'; }}
         >
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-orange-600">
+            <span class="text-xs font-medium text-[var(--accent-ink)]">
               Community
             </span>
-            <Users size={18} class="text-slate-400" />
+            <Users size={18} strokeWidth={1.5} class="text-[var(--text-muted)]" />
           </div>
           <div class="mt-2 flex items-baseline justify-between">
             <div>
-              <h2 class="text-base font-bold text-slate-900">Passion Groups</h2>
-              <p class="mt-1 text-2xl font-bold text-slate-900">{passionGroups.length} <span class="text-xs font-normal text-slate-400">กลุ่ม</span></p>
+              <h2 class="text-base font-medium text-[var(--text)]">Passion Groups</h2>
+              <p class="mt-1 text-2xl font-medium tabular-nums text-[var(--text)]">{passionGroups.length} <span class="text-xs font-normal text-[var(--text-muted)]">กลุ่ม</span></p>
             </div>
             <button
               onclick={(e) => {
@@ -543,7 +543,7 @@
                 activeTab = 'passion-group';
                 openAddGroup();
               }}
-              class="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-100"
+              class="rounded-lg bg-[var(--raised)] px-3 py-1.5 text-xs font-medium text-[var(--accent-ink)] transition-colors hover:bg-[var(--border)]"
             >
               + เพิ่มกลุ่ม
             </button>
@@ -551,22 +551,22 @@
         </div>
 
         <div
-          class="rounded-2xl border border-slate-200 bg-white p-5 cursor-pointer shadow-sm transition hover:border-orange-300"
+          class="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 cursor-pointer transition-colors hover:border-[var(--text-muted)]/30"
           onclick={() => (activeTab = 'services')}
           role="button"
           tabindex="0"
           onkeydown={(e) => { if (e.key === 'Enter') activeTab = 'services'; }}
         >
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <span class="text-xs font-medium text-[var(--text-muted)]">
               Services
             </span>
-            <Layers size={18} class="text-slate-400" />
+            <Layers size={18} strokeWidth={1.5} class="text-[var(--text-muted)]" />
           </div>
           <div class="mt-2 flex items-baseline justify-between">
             <div>
-              <h2 class="text-base font-bold text-slate-900">บริการในระบบ</h2>
-              <p class="mt-1 text-2xl font-bold text-slate-900">{services.length} <span class="text-xs font-normal text-slate-400">บริการ</span></p>
+              <h2 class="text-base font-medium text-[var(--text)]">บริการในระบบ</h2>
+              <p class="mt-1 text-2xl font-medium tabular-nums text-[var(--text)]">{services.length} <span class="text-xs font-normal text-[var(--text-muted)]">บริการ</span></p>
             </div>
             <button
               onclick={(e) => {
