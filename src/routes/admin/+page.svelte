@@ -427,7 +427,7 @@
             href="/auth/oidc"
             class="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600"
           >
-            <span>เข้าสู่ระบบด้วย KMITL Account (OIDC)</span>
+            <span>Login with Google</span>
           </a>
 
           <div class="my-5 flex items-center gap-3">

@@ -1,8 +1,8 @@
 import { json } from "@sveltejs/kit";
-import { createPocketBase, isAdmin } from "$lib/server/pocketbase";
+import { createPocketBase, extractTokenFromCookie, isAdmin } from "$lib/server/pocketbase";
 import type { RequestHandler } from "./$types";
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
+export const POST: RequestHandler = async ({ request, cookies, url }) => {
   const { email, password } = await request.json();
   const pb = createPocketBase();
   try {
@@ -21,7 +21,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
-      secure: false,
+      secure: url.protocol === "https:",
       maxAge: 60 * 60 * 24,
     });
     return json({ ok: true });
@@ -35,7 +35,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 
 export const GET: RequestHandler = async ({ request }) => {
   const pb = createPocketBase();
-  const token = request.headers.get("cookie")?.match(/pb_auth=([^;]+)/)?.[1];
+  const token = extractTokenFromCookie(request.headers.get("cookie"));
   if (!token) return json({ authenticated: false }, { status: 401 });
   pb.authStore.save(token, null);
   try {
