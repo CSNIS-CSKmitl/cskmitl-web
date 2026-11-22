@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { version } from "$app/environment";
   import { Search, Layers, Users, ShieldCheck } from "@lucide/svelte";
   import ServiceCard from "$lib/components/ServiceCard.svelte";
 
@@ -144,7 +145,7 @@
   <footer class="border-t border-[var(--border)] bg-[var(--surface)] px-6 py-4">
     <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-[var(--text-muted)] sm:flex-row">
       <p>© {new Date().getFullYear()} ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ สจล.</p>
-      <p class="font-mono text-[11px] text-[var(--text-muted)]">CS-KMITL Operational Hub</p>
+      <p class="font-mono text-[11px] tabular-nums text-[var(--text-muted)]" title="Semantic Versioning: MAJOR.MINOR.PATCH">CS-KMITL Operational Hub · v{version}</p>
     </div>
   </footer>
 </div>
