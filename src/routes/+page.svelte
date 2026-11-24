@@ -40,12 +40,10 @@
   <header class="border-b border-[var(--border)] bg-[var(--surface)]">
     <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
       <div class="flex items-center gap-3">
-        <span class="grid size-8 place-items-center rounded-lg bg-[var(--text)] font-mono text-xs font-medium text-[var(--bg)]">
-          CS
-        </span>
+        <img src="/logocs.png" alt="CS KMITL Logo" class="size-9 shrink-0 object-contain" />
         <div class="flex flex-col">
           <span class="text-sm font-medium tracking-tight text-[var(--text)]">CS-KMITL Hub</span>
-          <span class="text-[11px] font-mono text-[var(--text-muted)]">portal.cskmitl.com</span>
+          <span class="text-[11px] text-[var(--text-muted)]">ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ สจล.</span>
         </div>
       </div>
 
@@ -144,7 +142,7 @@
   <!-- Quiet Footer -->
   <footer class="border-t border-[var(--border)] bg-[var(--surface)] px-6 py-4">
     <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-[var(--text-muted)] sm:flex-row">
-      <p>© {new Date().getFullYear()} ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ สจล.</p>
+      <p>© {new Date().getFullYear()} · <a href="https://github.com/techasit5415" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text)] hover:underline">นาย เตชสิทธิ์ วาณิชภัทรกุล</a></p>
       <p class="font-mono text-[11px] tabular-nums text-[var(--text-muted)]" title="Semantic Versioning: MAJOR.MINOR.PATCH">CS-KMITL Operational Hub · v{version}</p>
     </div>
   </footer>

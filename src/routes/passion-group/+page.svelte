@@ -43,9 +43,7 @@
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
       <a href="/" class="flex items-center gap-2.5 font-bold transition hover:opacity-90">
-        <span class="grid size-9 place-items-center rounded-xl bg-orange-500 text-sm font-bold text-white shadow-sm">
-          CS
-        </span>
+        <img src="/logocs.png" alt="CS KMITL Logo" class="size-9 shrink-0 object-contain" />
         <span class="text-base font-bold text-slate-900">CS-KMITL Hub</span>
       </a>
 
